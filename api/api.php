@@ -3,7 +3,8 @@
 // API reorganizada para manejo de usuarios y tarjetas
 
 // Incluir la conexión
-require_once __DIR__ . "/../conexion.php";
+require_once __DIR__ . "/conexion.php";
+
 
 // Establecer cabeceras para API
 header('Content-Type: application/json');
@@ -28,17 +29,27 @@ try {
                 if ($requestMethod === "POST") {
                     $username = $_POST['username'] ?? '';
                     $password = $_POST['password'] ?? '';
-                    Login($username, $password);//funcion del controller
+                    Login($username, $password);
                 } else {
                     echo json_encode(["success" => false, "error" => "Método no permitido para login"]);
                 }
                 break;
-                
-            
+
             case 'logout':
-               //Cerrar sesión
-                
-           
+                if ($requestMethod === "POST") {
+                    Logout();
+                } else {
+                    echo json_encode(["success" => false, "error" => "Método no permitido para logout"]);
+                }
+                break;
+
+            case 'verificar':
+                if ($requestMethod === "GET") {
+                    VerificarSesion();
+                } else {
+                    echo json_encode(["success" => false, "error" => "Método no permitido"]);
+                }
+                break;
                 
             default:
                 echo json_encode(["success" => false, "error" => "Acción de usuarios no válida"]);
@@ -54,7 +65,7 @@ try {
         switch ($accion) {
             case 'mis_tarjetas':
                 if ($requestMethod === "GET") {
-                    obtenerMisTarjetas();//funcion del controller
+                    obtenerMisTarjetas();
                 } else {
                     echo json_encode(["success" => false, "error" => "Método no permitido"]);
                 }
@@ -62,13 +73,11 @@ try {
                 
             case 'todas':
                 if ($requestMethod === "GET") {
-                    obtenerTodasTarjetas();//funcion del controller
+                    obtenerTodasTarjetas();
                 } else {
                     echo json_encode(["success" => false, "error" => "Método no permitido"]);
                 }
                 break;
-                
-        
                 
             default:
                 echo json_encode(["success" => false, "error" => "Acción de tarjetas no válida"]);
@@ -92,16 +101,12 @@ try {
                 "endpoints" => [
                     "usuarios" => [
                         "login" => "POST /api.php?seccion=usuarios&accion=login [username, password]",
-                        "register" => "POST /api.php?seccion=usuarios&accion=register [datos]", 
                         "logout" => "POST /api.php?seccion=usuarios&accion=logout",
-                        "verificar" => "GET /api.php?seccion=usuarios&accion=verificar",
-                        "perfil" => "GET /api.php?seccion=usuarios&accion=perfil"
+                        "verificar" => "GET /api.php?seccion=usuarios&accion=verificar"
                     ],
                     "tarjetas" => [
                         "mis_tarjetas" => "GET /api.php?seccion=tarjetas&accion=mis_tarjetas (🔒 requiere login)",
-                        "todas" => "GET /api.php?seccion=tarjetas&accion=todas",
-                        "asignar" => "POST /api.php?seccion=tarjetas&accion=asignar [tarjeta_id] (🔒 requiere login)",
-                        "favorita" => "POST /api.php?seccion=tarjetas&accion=favorita [tarjeta_id] (🔒 requiere login)"
+                        "todas" => "GET /api.php?seccion=tarjetas&accion=todas"
                     ]
                 ],
                 "mensajes_especiales" => [
